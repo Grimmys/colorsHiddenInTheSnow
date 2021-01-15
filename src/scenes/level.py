@@ -1,6 +1,8 @@
 import math
 import random
 
+from wasabi2d.clock import clock
+
 from src.constants import SCREEN_WIDTH, SCREEN_HEIGHT, GAME_TITLE, NB_TILES_HORIZONTAL, NB_TILES_VERTICAL, TILE_SIZE, \
     LOOPS_LIMIT
 from src.entities.color_relic import ColorRelic
@@ -120,6 +122,8 @@ class Level:
         self.env_tiles = None
         self.snowman = None
         self.color_relics = []
+        self.message = None
+        self.message_box = None
 
     def build(self):
         self.scene.layers.clear()
@@ -127,6 +131,8 @@ class Level:
         self.env_tiles = None
         self.snowman = None
         self.color_relics = []
+        self.message = None
+        self.message_box = None
 
         self.generate_map()
 
@@ -251,10 +257,46 @@ class Level:
             else:
                 pos[0] += TILE_SIZE
 
+    def remove_text_label(self):
+        self.message.delete()
+        self.message_box.delete()
+        self.message = None
+        self.message_box = None
+
+    def all_relics_found(self):
+        return all([True if cr.visible else False for cr in self.color_relics])
+
+    def relic_found(self, color_relic):
+        if self.message:
+            self.remove_text_label()
+
+        self.message = self.scene.layers[10].add_label("You found the " + color_relic.name + " color relic !",
+                                              font='alagard_by_pix3m-d6awiwp.ttf', fontsize=30,
+                                              pos=(self.scene.width // 2, self.scene.height // 2), align='center',
+                                              color='black')
+        self.message_box = self.scene.layers[9].add_rect(width=len(self.message.text) * (self.message.fontsize // 2), height=self.message.fontsize + 20,
+                                            fill=True)
+        self.message_box.pos = (self.scene.width // 2, self.scene.height // 2 - 10)
+        self.message_box.color = color_relic.name
+        clock.schedule_unique(self.remove_text_label, 5)
+        if self.all_relics_found():
+            clock.schedule(self.victory, 5)
+
     def update(self):
         for color_relic in self.color_relics:
             if not color_relic.visible:
-                color_relic.update(self.snowman.sprite.pos)
+                if color_relic.update(self.snowman.sprite.pos):
+                    self.relic_found(color_relic)
+
+    def victory(self):
+        self.message = self.scene.layers[10].add_label("You found all the relics, congratulations, it's a victory !",
+                                              font='alagard_by_pix3m-d6awiwp.ttf', fontsize=40,
+                                              pos=(self.scene.width // 2, self.scene.height // 2), align='center',
+                                              color='white')
+        self.message_box = self.scene.layers[9].add_rect(width=len(self.message.text) * (self.message.fontsize // 2), height=self.message.fontsize + 20,
+                                            fill=True)
+        self.message_box.pos = (self.scene.width // 2, self.scene.height // 2 - 10)
+        self.message_box.color = 'black'
 
     def deactivate(self):
         self.is_active = False
