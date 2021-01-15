@@ -1,5 +1,6 @@
 from wasabi2d import run, Scene, event, keys
 
+from settings import SNOWMAN_SPEED
 from src.scenes.level import Level
 from src.scenes.main_menu import MainMenu
 from src.constants import SCREEN_WIDTH, SCREEN_HEIGHT, GAME_TITLE
@@ -11,7 +12,7 @@ if __name__ == "__main__":
     main_menu.draw()
 
     @event
-    def on_key_up(key, mod):
+    def on_key_up(key):
         if key == keys.RETURN:
             if main_menu.is_active:
                 main_menu.deactivate()
@@ -19,11 +20,13 @@ if __name__ == "__main__":
                 level.build()
         if key == keys.R and level.is_active:
             level.build()
+        if key == keys.ESCAPE:
+            exit()
 
 
     @event
     def update(dt, keyboard):
-        speed = 100
+        speed = SNOWMAN_SPEED
         if keyboard.lshift or keyboard.rshift:
             speed *= 2
         v = speed * dt

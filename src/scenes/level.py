@@ -203,14 +203,16 @@ class Level:
             trees.append(generate_random_tree(layers_content_trees, avoid=reeds_areas + lakes + trees))
 
     def generate_color_relic(self, color):
-        color_filter = self.scene.layers[95].add_sprite(color, pos=(self.scene.width // 2, self.scene.height // 2), color=(1, 1, 1, 0), scale=2)
+        color_filter = self.scene.layers[95].add_sprite(color, pos=(self.scene.width // 2, self.scene.height // 2),
+                                                        color=(1, 1, 1, 0), scale=2)
         entities_to_avoid = [
             {'entities': [self.snowman.sprite.pos],
              'min_dist': 400},
             {'entities': [cr.sprite.pos for cr in self.color_relics],
              'min_dist': 200}
         ]
-        relic_pos = self.generate_pos_far_from([self.snow_tiles, self.env_tiles], ColorRelic.BLOCKED_BY, entities_to_avoid)
+        relic_pos = self.generate_pos_far_from([self.snow_tiles, self.env_tiles], ColorRelic.BLOCKED_BY,
+                                               entities_to_avoid)
         color_relic_sprite = self.scene.layers[2].add_sprite(color + '_relic', pos=relic_pos, color=(1, 1, 1, 0))
         self.color_relics.append(ColorRelic(color, color_relic_sprite, [self.snow_tiles, self.env_tiles], color_filter))
 
@@ -271,11 +273,13 @@ class Level:
             self.remove_text_label()
 
         self.message = self.scene.layers[10].add_label("You found the " + color_relic.name + " color relic !",
-                                              font='alagard_by_pix3m-d6awiwp.ttf', fontsize=30,
-                                              pos=(self.scene.width // 2, self.scene.height // 2), align='center',
-                                              color='black')
-        self.message_box = self.scene.layers[9].add_rect(width=len(self.message.text) * (self.message.fontsize // 2), height=self.message.fontsize + 20,
-                                            fill=True)
+                                                       font='alagard_by_pix3m-d6awiwp.ttf', fontsize=30,
+                                                       pos=(self.scene.width // 2, self.scene.height // 2),
+                                                       align='center',
+                                                       color='black')
+        self.message_box = self.scene.layers[9].add_rect(width=len(self.message.text) * (self.message.fontsize // 2),
+                                                         height=self.message.fontsize + 20,
+                                                         fill=True)
         self.message_box.pos = (self.scene.width // 2, self.scene.height // 2 - 10)
         self.message_box.color = color_relic.name
         clock.schedule_unique(self.remove_text_label, 5)
@@ -290,11 +294,13 @@ class Level:
 
     def victory(self):
         self.message = self.scene.layers[10].add_label("You found all the relics, congratulations, it's a victory !",
-                                              font='alagard_by_pix3m-d6awiwp.ttf', fontsize=40,
-                                              pos=(self.scene.width // 2, self.scene.height // 2), align='center',
-                                              color='white')
-        self.message_box = self.scene.layers[9].add_rect(width=len(self.message.text) * (self.message.fontsize // 2), height=self.message.fontsize + 20,
-                                            fill=True)
+                                                       font='alagard_by_pix3m-d6awiwp.ttf', fontsize=40,
+                                                       pos=(self.scene.width // 2, self.scene.height // 2),
+                                                       align='center',
+                                                       color='white')
+        self.message_box = self.scene.layers[9].add_rect(width=len(self.message.text) * (self.message.fontsize // 2),
+                                                         height=self.message.fontsize + 20,
+                                                         fill=True)
         self.message_box.pos = (self.scene.width // 2, self.scene.height // 2 - 10)
         self.message_box.color = 'black'
 
