@@ -136,7 +136,7 @@ class Level:
 
         self.generate_map()
 
-        snowman_sprite = self.scene.layers[3].add_sprite('snowman_walk_down_0',
+        snowman_sprite = self.scene.layers[3].add_sprite('snowman_down_0',
                                                          pos=self.generate_available_pos(
                                                              [self.snow_tiles, self.env_tiles], Snowman.BLOCKED_BY))
         self.snowman = Snowman(snowman_sprite, [self.snow_tiles, self.env_tiles])
@@ -150,8 +150,7 @@ class Level:
                                vel=2, vel_spread=50)
 
     def generate_map(self):
-        ground_tiles = self.scene.layers[0].add_tile_map()
-        ground_tiles.fill_rect(['snow_ground'], 0, 0, NB_TILES_HORIZONTAL, NB_TILES_VERTICAL)
+        self.scene.background = '#fffafa'
 
         self.snow_tiles = self.scene.layers[1].add_tile_map()
         self.env_tiles = self.scene.layers[2].add_tile_map()

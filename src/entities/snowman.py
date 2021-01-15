@@ -3,7 +3,7 @@ from src.utilities.utility_functions import get_base_name
 
 
 class Snowman:
-    FRAME_LIMIT = 4
+    FRAME_LIMIT = 3
     BLOCKED_BY = ['boreal_lake', 'small_pine']
 
     def __init__(self, sprite, layers, direction='down'):
@@ -18,13 +18,13 @@ class Snowman:
             self.direction = direction
 
         if direction == 'right':
-            img_direction = 'snowman_walk_right'
+            img_direction = 'snowman_right'
         elif direction == 'left':
-            img_direction = 'snowman_walk_left'
+            img_direction = 'snowman_left'
         elif direction == 'down':
-            img_direction = 'snowman_walk_down'
+            img_direction = 'snowman_down'
         else:
-            img_direction = 'snowman_walk_up'
+            img_direction = 'snowman_up'
         self.sprite.image = img_direction + '_' + str(self.current_frame // 4)
 
         simulate_mvt = self.sprite.pos + mvt
