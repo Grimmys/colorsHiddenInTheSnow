@@ -320,7 +320,7 @@ class Level:
         box = self.scene.layers[9].add_rect(width=len(stats_txt) * (stats_fontsize // 2),
                                       height=stats_fontsize + 20,
                                       fill=True)
-        box.pos = (self.scene.width // 2, self.scene.height // 2 + self.message.fontsize + 10)
+        box.pos = (self.scene.width // 2, self.scene.height // 2 + self.message.fontsize + 15)
         box.color = 'black'
 
     def deactivate(self):
