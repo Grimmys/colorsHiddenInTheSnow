@@ -27,19 +27,21 @@ if __name__ == "__main__":
     @event
     def update(dt, keyboard):
         speed = SNOWMAN_SPEED
+        speed_up = False
         if keyboard.lshift or keyboard.rshift:
+            speed_up = True
             speed *= 2
         v = speed * dt
 
         if level.is_active:
             if keyboard.right or keyboard.d:
-                level.snowman.move('right', (v, 0))
+                level.snowman.move('right', (v, 0), speed_up)
             elif keyboard.left or keyboard.q:
-                level.snowman.move('left', (-v, 0))
+                level.snowman.move('left', (-v, 0), speed_up)
             elif keyboard.up or keyboard.z:
-                level.snowman.move('up', (0, -v))
+                level.snowman.move('up', (0, -v), speed_up)
             elif keyboard.down or keyboard.s:
-                level.snowman.move('down', (0, v))
+                level.snowman.move('down', (0, v), speed_up)
             level.update()
 
     @event

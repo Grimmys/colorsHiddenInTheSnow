@@ -1,3 +1,4 @@
+from settings import SNOWMAN_SPEED
 from src.constants import NB_TILES_HORIZONTAL, NB_TILES_VERTICAL, TILE_SIZE
 from src.utilities.utility_functions import get_base_name
 
@@ -11,8 +12,9 @@ class Snowman:
         self.direction = direction
         self.layers = layers
         self.current_frame = 0
+        self.nb_steps = 0
 
-    def move(self, direction, mvt):
+    def move(self, direction, mvt, speed_up):
         if direction != self.direction:
             self.current_frame = 0
             self.direction = direction
@@ -41,6 +43,7 @@ class Snowman:
 
         if move_allowed:
             self.sprite.pos += mvt
+            self.nb_steps += 2 if speed_up else 1
 
         self.current_frame += 1
         if self.current_frame == Snowman.FRAME_LIMIT * 4:

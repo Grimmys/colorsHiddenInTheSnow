@@ -1,5 +1,6 @@
 import math
 import random
+import time
 
 from wasabi2d.clock import clock
 
@@ -124,6 +125,9 @@ class Level:
         self.color_relics = []
         self.message = None
         self.message_box = None
+        self.timer = 0
+        self.victory_time = 0
+        self.victory_steps = 0
 
     def build(self):
         self.scene.layers.clear()
@@ -133,6 +137,7 @@ class Level:
         self.color_relics = []
         self.message = None
         self.message_box = None
+        self.timer = time.time()
 
         self.generate_map()
 
@@ -283,6 +288,8 @@ class Level:
         self.message_box.color = color_relic.name
         clock.schedule_unique(self.remove_text_label, 5)
         if self.all_relics_found():
+            self.victory_time = int(time.time() - self.timer)
+            self.victory_steps = self.snowman.nb_steps
             clock.schedule(self.victory, 5)
 
     def update(self):
@@ -302,6 +309,19 @@ class Level:
                                                          fill=True)
         self.message_box.pos = (self.scene.width // 2, self.scene.height // 2 - 10)
         self.message_box.color = 'black'
+
+        stats_txt = "You made it in " + str(self.victory_steps) + " steps and " + str(self.victory_time) + " seconds"
+        stats_fontsize = 20
+        self.scene.layers[10].add_label(stats_txt,
+                                        font='alagard_by_pix3m-d6awiwp.ttf', fontsize=stats_fontsize,
+                                        pos=(self.scene.width // 2, self.scene.height // 2 + self.message.fontsize + 20),
+                                        align='center',
+                                        color='white')
+        box = self.scene.layers[9].add_rect(width=len(stats_txt) * (stats_fontsize // 2),
+                                      height=stats_fontsize + 20,
+                                      fill=True)
+        box.pos = (self.scene.width // 2, self.scene.height // 2 + self.message.fontsize + 10)
+        box.color = 'black'
 
     def deactivate(self):
         self.is_active = False

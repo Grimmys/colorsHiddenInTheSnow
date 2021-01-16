@@ -6,3 +6,7 @@ def get_base_name(sprite_name):
     if res:
         return res.group(0)
     return None
+
+
+def absolute_move(vector):
+    return abs(vector[0]) + abs(vector[1])
