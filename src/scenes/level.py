@@ -108,11 +108,14 @@ def generate_random_area(layers_content, size=5):
             layer_content.layer[pos[0], pos[1]] = random.choice(layer_content.get_content(content))
 
 
-def generate_random_tree(layers_content, avoid=None):
+def generate_random_tree(layer_content, avoid=None):
     if avoid is None:
         avoid = []
-    return generate_random_rect_area(layers_content, min_width=2, min_height=2, max_width=2, max_height=2,
-                                     avoid=avoid, min_dist=3)
+    init_pos, final_pos = generate_valid_rect(min_width=1, min_height=2, max_width=1, max_height=2,
+                              avoid=avoid, min_dist=2)
+    layer_content.layer[init_pos] = layer_content.get_content('top')[0]
+    layer_content.layer[final_pos] = layer_content.get_content('bottom')[0]
+    return init_pos,final_pos
 
 
 class Level:
@@ -121,6 +124,7 @@ class Level:
         self.is_active = active
         self.snow_tiles = None
         self.env_tiles = None
+        self.obstacles_tiles = None
         self.snowman = None
         self.color_relics = []
         self.message = None
@@ -133,6 +137,7 @@ class Level:
         self.scene.layers.clear()
         self.snow_tiles = None
         self.env_tiles = None
+        self.obstacles_tiles = None
         self.snowman = None
         self.color_relics = []
         self.message = None
@@ -143,8 +148,8 @@ class Level:
 
         snowman_sprite = self.scene.layers[3].add_sprite('snowman_down_0',
                                                          pos=self.generate_available_pos(
-                                                             [self.snow_tiles, self.env_tiles], Snowman.BLOCKED_BY))
-        self.snowman = Snowman(snowman_sprite, [self.snow_tiles, self.env_tiles])
+                                                             [self.snow_tiles, self.env_tiles, self.obstacles_tiles], Snowman.BLOCKED_BY))
+        self.snowman = Snowman(snowman_sprite, [self.snow_tiles, self.env_tiles, self.obstacles_tiles])
 
         self.generate_color_relic('red')
         self.generate_color_relic('green')
@@ -159,6 +164,7 @@ class Level:
 
         self.snow_tiles = self.scene.layers[1].add_tile_map()
         self.env_tiles = self.scene.layers[2].add_tile_map()
+        self.obstacles_tiles = self.scene.layers[3].add_tile_map()
 
         layers_content_lakes = [
             EnvStructure(self.snow_tiles, ['boreal_lake_center'], oriented_content=True,
@@ -180,12 +186,7 @@ class Level:
             )
 
         layers_content_reeds = [
-            EnvStructure(self.snow_tiles, ['snow_crackles_big'], oriented_content=True,
-                         bottom_left_content='snow_crackles_bottom_left',
-                         top_left_content='snow_crackles_top_left',
-                         bottom_right_content='snow_crackles_bottom_right',
-                         top_right_content='snow_crackles_top_right'),
-            EnvStructure(self.env_tiles, ['reed_snow'] + [None] * 3)
+            EnvStructure(self.env_tiles, ['snow_grass'])
         ]
 
         reeds_areas = []
@@ -194,16 +195,12 @@ class Level:
                 generate_random_rect_area(layers_content_reeds, min_width=2, min_height=2, max_width=5, max_height=5,
                                           avoid=reeds_areas + lakes, min_dist=3))
 
-        layers_content_trees = [
-            EnvStructure(self.env_tiles, [], oriented_content=True,
-                         bottom_left_content='small_pine_bottom_left',
-                         top_left_content='small_pine_top_left',
-                         bottom_right_content='small_pine_bottom_right',
-                         top_right_content='small_pine_top_right')
-        ]
+        layers_content_trees = EnvStructure(self.obstacles_tiles, [], oriented_content=True,
+                         top_content='spruce_tree_top',
+                         bottom_content='spruce_tree_bottom')
 
         trees = []
-        for _ in range(random.randint(20, 40)):
+        for _ in range(random.randint(20, 60)):
             trees.append(generate_random_tree(layers_content_trees, avoid=reeds_areas + lakes + trees))
 
     def generate_color_relic(self, color):
@@ -314,12 +311,13 @@ class Level:
         stats_fontsize = 20
         self.scene.layers[10].add_label(stats_txt,
                                         font='alagard_by_pix3m-d6awiwp.ttf', fontsize=stats_fontsize,
-                                        pos=(self.scene.width // 2, self.scene.height // 2 + self.message.fontsize + 20),
+                                        pos=(
+                                        self.scene.width // 2, self.scene.height // 2 + self.message.fontsize + 20),
                                         align='center',
                                         color='white')
         box = self.scene.layers[9].add_rect(width=len(stats_txt) * (stats_fontsize // 2),
-                                      height=stats_fontsize + 20,
-                                      fill=True)
+                                            height=stats_fontsize + 20,
+                                            fill=True)
         box.pos = (self.scene.width // 2, self.scene.height // 2 + self.message.fontsize + 15)
         box.color = 'black'
 

@@ -5,7 +5,7 @@ from src.utilities.utility_functions import get_base_name
 
 class Snowman:
     FRAME_LIMIT = 3
-    BLOCKED_BY = ['boreal_lake', 'small_pine']
+    BLOCKED_BY = ['boreal_lake', 'spruce_tree']
 
     def __init__(self, sprite, layers, direction='down'):
         self.sprite = sprite

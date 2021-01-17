@@ -4,7 +4,7 @@ from settings import MIN_DIST_TO_FIND_RELIC, MAX_FILTER_INTENSITY, FILTER_INTENS
 
 
 class ColorRelic:
-    BLOCKED_BY = ['boreal_lake', 'small_pine']
+    BLOCKED_BY = ['boreal_lake', 'spruce_tree']
 
     def __init__(self, name, sprite, layers, color_filter):
         self.name = name
