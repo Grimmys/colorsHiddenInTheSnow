@@ -1,6 +1,6 @@
 from settings import SNOWMAN_SPEED
 from src.constants import NB_TILES_HORIZONTAL, NB_TILES_VERTICAL, TILE_SIZE
-from src.utilities.utility_functions import get_base_name
+from src.utilities.utility_functions import get_base_name, absolute_move
 
 
 class Snowman:
@@ -43,7 +43,7 @@ class Snowman:
 
         if move_allowed:
             self.sprite.pos += mvt
-            self.nb_steps += 2 if speed_up else 1
+            self.nb_steps += absolute_move(mvt) / SNOWMAN_SPEED * 10
 
         self.current_frame += 1
         if self.current_frame == Snowman.FRAME_LIMIT * 4:

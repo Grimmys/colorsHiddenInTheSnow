@@ -9,17 +9,16 @@ if __name__ == "__main__":
     scene = Scene(SCREEN_WIDTH, SCREEN_HEIGHT, GAME_TITLE, rootdir='.')
     main_menu = MainMenu(scene, True)
     level = Level(scene, False)
-    main_menu.draw()
+    main_menu.load()
 
     @event
     def on_key_up(key):
         if key == keys.RETURN:
             if main_menu.is_active:
                 main_menu.deactivate()
-                level.is_active = True
-                level.build()
+                level.load()
         if key == keys.R and level.is_active:
-            level.build()
+            level.load()
         if key == keys.ESCAPE:
             exit()
 

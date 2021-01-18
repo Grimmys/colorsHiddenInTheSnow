@@ -2,22 +2,14 @@ import math
 import random
 import time
 
+from wasabi2d import music
 from wasabi2d.clock import clock
 
-from src.constants import SCREEN_WIDTH, SCREEN_HEIGHT, GAME_TITLE, NB_TILES_HORIZONTAL, NB_TILES_VERTICAL, TILE_SIZE, \
-    LOOPS_LIMIT
+from src.constants import NB_TILES_HORIZONTAL, NB_TILES_VERTICAL, TILE_SIZE, LOOPS_LIMIT, TIME_PER_MSG
 from src.entities.color_relic import ColorRelic
 from src.entities.snowman import Snowman
 from src.utilities.env_structure import EnvStructure
 from src.utilities.utility_functions import get_base_name
-
-
-def snow_crackles(layer, top_left, top_right, bottom_left, bottom_right):
-    layer.fill_rect('snow_crackles_big', top_left[0], top_left[1], bottom_left[0], bottom_right[1])
-    layer[top_left[0], top_left[1]] = 'snow_crackles_top_left'
-    layer[top_right[0], top_right[1]] = 'snow_crackles_top_right'
-    layer[bottom_left[0], bottom_left[1]] = 'snow_crackles_bottom_left'
-    layer[bottom_right[0], bottom_right[1]] = 'snow_crackles_bottom_right'
 
 
 def generate_neighbour(positions):
@@ -133,7 +125,11 @@ class Level:
         self.victory_time = 0
         self.victory_steps = 0
 
-    def build(self):
+    def load(self):
+        self.is_active = True
+
+        music.play('level_soundtrack')
+
         self.scene.layers.clear()
         self.snow_tiles = None
         self.env_tiles = None
@@ -155,8 +151,10 @@ class Level:
         self.generate_color_relic('green')
         self.generate_color_relic('blue')
 
-        snow_storm = self.scene.layers[90].add_particle_group(texture='snowball', max_age=10, gravity=(-100, 50))
-        snow_storm.add_emitter(pos=(self.scene.width, 0), pos_spread=300, angle=0.7, rate=500, size=1, size_spread=2,
+        snow_storm = self.scene.layers[90].add_particle_group(texture='snowball', max_age=8, gravity=(-200, 100))
+        snow_storm.add_emitter(pos=(self.scene.width, 0), pos_spread=300, angle=0.78, rate=250, size=1, size_spread=2,
+                               vel=2, vel_spread=50)
+        snow_storm.add_emitter(pos=(self.scene.width // 2,  self.scene.height // 2), pos_spread=300, angle=0.78, rate=250, size=1, size_spread=2,
                                vel=2, vel_spread=50)
 
     def generate_map(self):
@@ -261,10 +259,11 @@ class Level:
                 pos[0] += TILE_SIZE
 
     def remove_text_label(self):
-        self.message.delete()
-        self.message_box.delete()
-        self.message = None
-        self.message_box = None
+        if self.message is not None and self.message_box is not None:
+            self.message.delete()
+            self.message_box.delete()
+            self.message = None
+            self.message_box = None
 
     def all_relics_found(self):
         return all([True if cr.visible else False for cr in self.color_relics])
@@ -283,11 +282,11 @@ class Level:
                                                          fill=True)
         self.message_box.pos = (self.scene.width // 2, self.scene.height // 2 - 10)
         self.message_box.color = color_relic.name
-        clock.schedule_unique(self.remove_text_label, 5)
+        clock.schedule_unique(self.remove_text_label, TIME_PER_MSG)
         if self.all_relics_found():
             self.victory_time = int(time.time() - self.timer)
-            self.victory_steps = self.snowman.nb_steps
-            clock.schedule(self.victory, 5)
+            self.victory_steps = int(self.snowman.nb_steps)
+            clock.schedule(self.victory, TIME_PER_MSG)
 
     def update(self):
         for color_relic in self.color_relics:
@@ -311,8 +310,7 @@ class Level:
         stats_fontsize = 20
         self.scene.layers[10].add_label(stats_txt,
                                         font='alagard_by_pix3m-d6awiwp.ttf', fontsize=stats_fontsize,
-                                        pos=(
-                                        self.scene.width // 2, self.scene.height // 2 + self.message.fontsize + 20),
+                                        pos=(self.scene.width // 2, self.scene.height // 2 + self.message.fontsize + 20),
                                         align='center',
                                         color='white')
         box = self.scene.layers[9].add_rect(width=len(stats_txt) * (stats_fontsize // 2),
