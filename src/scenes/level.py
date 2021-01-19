@@ -105,8 +105,8 @@ def generate_random_tree(layer_content, avoid=None):
         avoid = []
     init_pos, final_pos = generate_valid_rect(min_width=1, min_height=2, max_width=1, max_height=2,
                               avoid=avoid, min_dist=2)
-    layer_content.layer[init_pos] = layer_content.get_content('top')[0]
-    layer_content.layer[final_pos] = layer_content.get_content('bottom')[0]
+    layer_content.layer[init_pos] = random.choice(layer_content.get_content('top'))
+    layer_content.layer[final_pos] = random.choice(layer_content.get_content('bottom'))
     return init_pos,final_pos
 
 
@@ -183,23 +183,26 @@ class Level:
                                           avoid=lakes, min_dist=5)
             )
 
-        layers_content_reeds = [
+        layers_content_grass = [
             EnvStructure(self.env_tiles, ['snow_grass'])
         ]
 
-        reeds_areas = []
+        grass_areas = []
         for _ in range(random.randint(12, 16)):
-            reeds_areas.append(
-                generate_random_rect_area(layers_content_reeds, min_width=2, min_height=2, max_width=5, max_height=5,
-                                          avoid=reeds_areas + lakes, min_dist=3))
+            grass_areas.append(
+                generate_random_rect_area(layers_content_grass, min_width=2, min_height=2, max_width=5, max_height=5,
+                                          avoid=grass_areas + lakes, min_dist=3))
 
-        layers_content_trees = EnvStructure(self.obstacles_tiles, [], oriented_content=True,
+        layer_content_trees_1 = EnvStructure(self.obstacles_tiles, [], oriented_content=True,
                          top_content='spruce_tree_top',
                          bottom_content='spruce_tree_bottom')
+        layer_content_trees_2 = EnvStructure(self.obstacles_tiles, [], oriented_content=True,
+                         top_content='spruce_tree_2_top',
+                         bottom_content='spruce_tree_2_bottom')
 
         trees = []
         for _ in range(random.randint(20, 60)):
-            trees.append(generate_random_tree(layers_content_trees, avoid=reeds_areas + lakes + trees))
+            trees.append(generate_random_tree(random.choice([layer_content_trees_1, layer_content_trees_2]), avoid=grass_areas + lakes + trees))
 
     def generate_color_relic(self, color):
         color_filter = self.scene.layers[95].add_sprite(color, pos=(self.scene.width // 2, self.scene.height // 2),
@@ -286,7 +289,7 @@ class Level:
         if self.all_relics_found():
             self.victory_time = int(time.time() - self.timer)
             self.victory_steps = int(self.snowman.nb_steps)
-            clock.schedule(self.victory, TIME_PER_MSG)
+            clock.schedule(self.victory, TIME_PER_MSG + 0.05)
 
     def update(self):
         for color_relic in self.color_relics:

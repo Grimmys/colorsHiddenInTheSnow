@@ -6,7 +6,7 @@ from src.scenes.main_menu import MainMenu
 from src.constants import SCREEN_WIDTH, SCREEN_HEIGHT, GAME_TITLE
 
 if __name__ == "__main__":
-    scene = Scene(SCREEN_WIDTH, SCREEN_HEIGHT, GAME_TITLE, rootdir='.')
+    scene = Scene(SCREEN_WIDTH, SCREEN_HEIGHT, GAME_TITLE, rootdir='.', icon='snowman_down_0')
     main_menu = MainMenu(scene, True)
     level = Level(scene, False)
     main_menu.load()

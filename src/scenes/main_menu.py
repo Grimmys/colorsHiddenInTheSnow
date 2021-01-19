@@ -1,8 +1,6 @@
-import random
-
 from wasabi2d import music, clock
 
-from src.constants import GAME_TITLE, SCREEN_WIDTH, TILE_SIZE
+from src.constants import GAME_TITLE, SCREEN_WIDTH
 
 
 class MainMenu:

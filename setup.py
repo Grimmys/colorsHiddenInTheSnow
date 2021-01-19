@@ -13,9 +13,9 @@ if sys.platform == "win32":
 setup(
     name="Colors hidden in the Snow",
     options={"build_exe": {
-        "packages": ["wasabi2d", "glcontext"],
+        "packages": ["wasabi2d", "glcontext", "pygame", "moderngl"],
         "excludes": ["tkinter", "matplotlib"],
-        "include_files": ["CREDITS", "images", "fonts", "src"]
+        "include_files": ["CREDITS", "images", "music", "fonts", "src"]
     }
     },
     version="0.0.1",
